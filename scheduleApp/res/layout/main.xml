@@ -25,7 +25,7 @@
         android:id="@+id/submitName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit" />
+        android:text="Search Employee Schedule" />
     
     <View
         android:layout_width="0dp"
