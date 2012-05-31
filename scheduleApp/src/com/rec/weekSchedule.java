@@ -80,7 +80,8 @@ public class weekSchedule extends ExpandableListActivity{
 				JsonNode root = this.readJson(data);
 				
 				//Enter More Magic here
-				//Parse JSON
+				//Parse JSON, fill expandable list
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

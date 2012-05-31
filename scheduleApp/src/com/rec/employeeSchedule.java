@@ -86,7 +86,8 @@ private class requestSchedule extends AsyncTask<Void, Void, String> {
 				JsonNode root = this.readJson(data);
 				
 				//Enter More Magic Here!
-				//Parse JSON
+				//Parse JSON, fill expandable list
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
