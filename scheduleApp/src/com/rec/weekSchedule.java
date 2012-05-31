@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,6 +17,12 @@ import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.TextView;
 
 public class weekSchedule extends ExpandableListActivity{
 	
@@ -74,8 +81,6 @@ public class weekSchedule extends ExpandableListActivity{
 				dialog.cancel();
 			}
 			
-			System.out.println(data);
-			
 			mapper = new ObjectMapper();
 			ArrayList <String> list = new ArrayList<String>();
 			final ArrayList <Shift> shifts = new ArrayList<Shift>();
@@ -83,6 +88,18 @@ public class weekSchedule extends ExpandableListActivity{
 			try {
 				JsonNode root = this.readJson(data);
 				
+				if (root.path("shift").isArray()) {
+					for (JsonNode node: root.path("shift")) {
+						Shift t = mapper.readValue(node.traverse(), Shift.class);
+						shifts.add(t);
+					}	
+				}
+				else {
+					Shift t = mapper.readValue(root.path("todo").traverse(), Shift.class);
+					shifts.add(t);
+				}
+				
+				List<String> days = new ArrayList<String>();
 				//Enter More Magic here
 				//Parse JSON, fill expandable list
 				
@@ -99,5 +116,75 @@ public class weekSchedule extends ExpandableListActivity{
 			rootNode = mapper.readTree(jp);
 			return rootNode;
 	    }
+    }
+	
+	public class MyExpandableListAdapter extends BaseExpandableListAdapter {
+        private String[] groups = new String[1];
+        private String[][] children = new String[1][1];
+        
+        public MyExpandableListAdapter(String[] group, String[][] children) {
+        	this.groups = group;
+        	this.children = children;
+        }
+
+        public Object getChild(int groupPosition, int childPosition) {
+            return children[groupPosition][childPosition];
+        }
+
+        public long getChildId(int groupPosition, int childPosition) {
+            return childPosition;
+        }
+
+        public int getChildrenCount(int groupPosition) {
+            return children[groupPosition].length;
+        }
+
+        public TextView getGenericView() {
+            // Layout parameters for the ExpandableListView
+            AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, 64);
+
+            TextView textView = new TextView(weekSchedule.this);
+            textView.setLayoutParams(lp);
+            // Center the text vertically
+            textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            // Set the text starting position
+            textView.setPadding(36, 0, 0, 0);
+            return textView;
+        }
+
+        public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
+                View convertView, ViewGroup parent) {
+            TextView textView = getGenericView();
+            textView.setText(getChild(groupPosition, childPosition).toString());
+            return textView;
+        }
+
+        public Object getGroup(int groupPosition) {
+            return groups[groupPosition];
+        }
+
+        public int getGroupCount() {
+            return groups.length;
+        }
+
+        public long getGroupId(int groupPosition) {
+            return groupPosition;
+        }
+
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
+                ViewGroup parent) {
+            TextView textView = getGenericView();
+            textView.setText(getGroup(groupPosition).toString());
+            return textView;
+        }
+
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
+            return true;
+        }
+
+        public boolean hasStableIds() {
+            return true;
+        }
     }
 }
