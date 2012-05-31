@@ -35,6 +35,6 @@
         android:id="@+id/viewSchedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Open Schedules" />
+        android:text="View Schedule for The Week" />
     
 </LinearLayout>

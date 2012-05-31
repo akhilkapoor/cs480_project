@@ -80,7 +80,7 @@ private class requestSchedule extends AsyncTask<Void, Void, String> {
 			
 			mapper = new ObjectMapper();
 			ArrayList <String> list = new ArrayList<String>();
-			final ArrayList <ShiftStruct> shifts = new ArrayList<ShiftStruct>();
+			final ArrayList <Shift> shifts = new ArrayList<Shift>();
 			
 			try {
 				JsonNode root = this.readJson(data);

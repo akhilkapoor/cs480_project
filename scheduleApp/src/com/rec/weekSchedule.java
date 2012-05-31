@@ -22,6 +22,8 @@ public class weekSchedule extends ExpandableListActivity{
 	@Override
     public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		
+		new requestSchedule().execute();
 	}
 	
 	private class requestSchedule extends AsyncTask<Void, Void, String> {
@@ -37,7 +39,7 @@ public class weekSchedule extends ExpandableListActivity{
 		protected String doInBackground(Void... arg0) {
 	    	String data = "";
 			try {
-				String sURL = "Replace This!";
+				String sURL = "http://zyntango.appspot.com/test/testapijson";
     			URL rURL = new URL(sURL);
     			HttpURLConnection conn = (HttpURLConnection)rURL.openConnection();
     			conn.setRequestMethod("GET");
@@ -72,9 +74,11 @@ public class weekSchedule extends ExpandableListActivity{
 				dialog.cancel();
 			}
 			
+			System.out.println(data);
+			
 			mapper = new ObjectMapper();
 			ArrayList <String> list = new ArrayList<String>();
-			final ArrayList <ShiftStruct> shifts = new ArrayList<ShiftStruct>();
+			final ArrayList <Shift> shifts = new ArrayList<Shift>();
 			
 			try {
 				JsonNode root = this.readJson(data);
