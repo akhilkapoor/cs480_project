@@ -22,26 +22,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 public class weekSchedule extends ExpandableListActivity{
 	
+	//Run On start of Activity
 	@Override
     public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.schedulelayout);
 		
 		new requestSchedule().execute();
 	}
 	
+	//Perform a request of the schedule for the week
 	private class requestSchedule extends AsyncTask<Void, Void, String> {
 		
 		private ProgressDialog dialog;
 		private ObjectMapper mapper;
 		
+		//Show a loading screen
 		protected void onPreExecute() {
 			dialog = ProgressDialog.show(weekSchedule.this, "", "Loading Schedule.\n Please wait...", true);			
 		}
 
+		//Perform request and receive JSON
 		@Override
 		protected String doInBackground(Void... arg0) {
 	    	String data = "";
@@ -75,8 +81,8 @@ public class weekSchedule extends ExpandableListActivity{
         	return data;
 		}
 		
+		//Parse JSON and update the UI
 		protected void onPostExecute(String data) {
-			//Enter Magic Here
 			if (dialog.isShowing()) {
 				dialog.cancel();
 			}
@@ -99,9 +105,26 @@ public class weekSchedule extends ExpandableListActivity{
 					shifts.add(t);
 				}
 				
-				List<String> days = new ArrayList<String>();
-				//Enter More Magic here
-				//Parse JSON, fill expandable list
+				ArrayList<String> shiftTimes = new ArrayList<String>();
+				ArrayList<ArrayList<String>> shiftData = new ArrayList<ArrayList<String>>();
+				
+				for (Shift s : shifts) {
+					String time = s.getDayOfWeek() + " " + s.getStartTime() + "-" + s.getEndTime();
+					shiftTimes.add(time);
+					
+					ArrayList<String> tData = new ArrayList<String>();
+					tData.add(s.getShiftState());
+					tData.add(s.getLocation());
+					tData.add(s.getPerson());
+					tData.add(s.getShiftNotes());
+					shiftData.add(tData);
+				}
+				
+				
+				ExpandableListView expList;
+				expList = getExpandableListView();
+				ExpoAdapter adapter = new ExpoAdapter(getApplicationContext(), shiftTimes, shiftData);
+				expList.setAdapter(adapter);
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -109,6 +132,7 @@ public class weekSchedule extends ExpandableListActivity{
 			
 		}
 		
+		//Read JSON using Jackson
 		public JsonNode readJson(String json) throws Exception {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode rootNode = mapper.readValue(json, JsonNode.class);
@@ -116,75 +140,5 @@ public class weekSchedule extends ExpandableListActivity{
 			rootNode = mapper.readTree(jp);
 			return rootNode;
 	    }
-    }
-	
-	public class MyExpandableListAdapter extends BaseExpandableListAdapter {
-        private String[] groups = new String[1];
-        private String[][] children = new String[1][1];
-        
-        public MyExpandableListAdapter(String[] group, String[][] children) {
-        	this.groups = group;
-        	this.children = children;
-        }
-
-        public Object getChild(int groupPosition, int childPosition) {
-            return children[groupPosition][childPosition];
-        }
-
-        public long getChildId(int groupPosition, int childPosition) {
-            return childPosition;
-        }
-
-        public int getChildrenCount(int groupPosition) {
-            return children[groupPosition].length;
-        }
-
-        public TextView getGenericView() {
-            // Layout parameters for the ExpandableListView
-            AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 64);
-
-            TextView textView = new TextView(weekSchedule.this);
-            textView.setLayoutParams(lp);
-            // Center the text vertically
-            textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-            // Set the text starting position
-            textView.setPadding(36, 0, 0, 0);
-            return textView;
-        }
-
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
-                View convertView, ViewGroup parent) {
-            TextView textView = getGenericView();
-            textView.setText(getChild(groupPosition, childPosition).toString());
-            return textView;
-        }
-
-        public Object getGroup(int groupPosition) {
-            return groups[groupPosition];
-        }
-
-        public int getGroupCount() {
-            return groups.length;
-        }
-
-        public long getGroupId(int groupPosition) {
-            return groupPosition;
-        }
-
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
-                ViewGroup parent) {
-            TextView textView = getGenericView();
-            textView.setText(getGroup(groupPosition).toString());
-            return textView;
-        }
-
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return true;
-        }
-
-        public boolean hasStableIds() {
-            return true;
-        }
     }
 }
