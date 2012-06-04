@@ -14,9 +14,9 @@ import android.widget.TextView;
 public class ExpoAdapter extends BaseExpandableListAdapter {
 	private Context context;
 	private ArrayList<String> groups;
-	private ArrayList<ArrayList<String>> children;
+	private ArrayList<ArrayList<Shift>> children;
         
-	public ExpoAdapter(Context context, ArrayList<String> group, ArrayList<ArrayList<String>> children) {
+	public ExpoAdapter(Context context, ArrayList<String> group, ArrayList<ArrayList<Shift>> children) {
 		this.context = context;
 		this.groups = group;
 		this.children = children;
@@ -51,14 +51,21 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
 	@Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
             View convertView, ViewGroup parent) {
-        String data = (String) getChild(groupPosition, childPosition);
+        Shift data = (Shift) getChild(groupPosition, childPosition);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.childrow, null);
         }
-        TextView tv = (TextView) convertView.findViewById(R.id.shiftData);
-        tv.setText("   " + data);
+        TextView tvLocation = (TextView) convertView.findViewById(R.id.location);
+        TextView tvPerson = (TextView) convertView.findViewById(R.id.person);
+        TextView tvState = (TextView) convertView.findViewById(R.id.shiftState);
+        TextView tvNotes = (TextView) convertView.findViewById(R.id.shiftNotes);
+        
+        tvLocation.setText(data.getLocation());
+        tvPerson.setText(data.getPerson());
+        tvState.setText(data.getShiftState());
+        tvNotes.setText(data.getShiftNotes());
 
         return convertView;
     }
@@ -97,15 +104,15 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
 		return true;
 	}
 	
-	public void addShift(String Shift) {
-        if (!groups.contains(Shift)) {
-            groups.add(Shift);
-            children.add(new ArrayList<String>());
+	public void addShift(String shift) {
+        if (!groups.contains(shift)) {
+            groups.add(shift);
+            children.add(new ArrayList<Shift>());
         }
     }
 	
-	public void addShiftData(String Shift, String data) {
-		int index = groups.indexOf(Shift);
+	public void addShiftData(String shiftTime, Shift data) {
+		int index = groups.indexOf(shiftTime);
 		if (index >= 0) {
 			children.get(index).add(data);
 		}

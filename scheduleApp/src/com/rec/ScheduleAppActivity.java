@@ -26,7 +26,7 @@ public class ScheduleAppActivity extends Activity {
         nameButton = (Button) findViewById(R.id.submitName);
         nameButton.setOnClickListener(new OnClickListener() {
         	public void onClick(View v) {
-        		Intent empSched = new Intent(v.getContext(), employeeSchedule.class);
+        		Intent empSched = new Intent(v.getContext(), weekSchedule.class);
         		empSched.putExtra("employee", nameField.getText().toString());
         		startActivity(empSched);
         	}
@@ -37,6 +37,7 @@ public class ScheduleAppActivity extends Activity {
         scheduleButton.setOnClickListener(new OnClickListener() {
         	public void onClick(View v) {
         		Intent weekSched = new Intent(v.getContext(), weekSchedule.class);
+        		weekSched.putExtra("employee", "");
         		startActivity(weekSched);
         	}
         });

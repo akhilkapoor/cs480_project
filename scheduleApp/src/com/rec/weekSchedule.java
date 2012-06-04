@@ -22,16 +22,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 public class weekSchedule extends ExpandableListActivity{
+	
+	private EditText eName;
 	
 	//Run On start of Activity
 	@Override
     public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedulelayout);
+		eName = new EditText(this);
+		
+		Bundle extras = getIntent().getExtras();
+		eName.setText(extras.getString("employee"));
 		
 		new requestSchedule().execute();
 	}
@@ -52,7 +59,7 @@ public class weekSchedule extends ExpandableListActivity{
 		protected String doInBackground(Void... arg0) {
 	    	String data = "";
 			try {
-				String sURL = "http://zyntango.appspot.com/test/testapijson";
+				String sURL = "http://zyntango.appspot.com/test/testapi";
     			URL rURL = new URL(sURL);
     			HttpURLConnection conn = (HttpURLConnection)rURL.openConnection();
     			conn.setRequestMethod("GET");
@@ -86,9 +93,10 @@ public class weekSchedule extends ExpandableListActivity{
 			if (dialog.isShowing()) {
 				dialog.cancel();
 			}
+			String empName = eName.getText().toString();
+			empName = empName.toLowerCase();
 			
 			mapper = new ObjectMapper();
-			ArrayList <String> list = new ArrayList<String>();
 			final ArrayList <Shift> shifts = new ArrayList<Shift>();
 			
 			try {
@@ -97,7 +105,14 @@ public class weekSchedule extends ExpandableListActivity{
 				if (root.path("shift").isArray()) {
 					for (JsonNode node: root.path("shift")) {
 						Shift t = mapper.readValue(node.traverse(), Shift.class);
-						shifts.add(t);
+						String tName = t.getPerson().toLowerCase();
+						
+						if ( empName.equals("") ){
+							shifts.add(t);
+						}
+						else if (tName.contains(empName) ) {
+							shifts.add(t);
+						}
 					}	
 				}
 				else {
@@ -106,24 +121,17 @@ public class weekSchedule extends ExpandableListActivity{
 				}
 				
 				ArrayList<String> shiftTimes = new ArrayList<String>();
-				ArrayList<ArrayList<String>> shiftData = new ArrayList<ArrayList<String>>();
-				
-				for (Shift s : shifts) {
-					String time = s.getDayOfWeek() + " " + s.getStartTime() + "-" + s.getEndTime();
-					shiftTimes.add(time);
-					
-					ArrayList<String> tData = new ArrayList<String>();
-					tData.add(s.getShiftState());
-					tData.add(s.getLocation());
-					tData.add(s.getPerson());
-					tData.add(s.getShiftNotes());
-					shiftData.add(tData);
-				}
-				
+				ArrayList<ArrayList<Shift>> shiftData = new ArrayList<ArrayList<Shift>>();
 				
 				ExpandableListView expList;
 				expList = getExpandableListView();
 				ExpoAdapter adapter = new ExpoAdapter(getApplicationContext(), shiftTimes, shiftData);
+				
+				for (Shift s : shifts) {
+					String time = s.getDayOfWeek() + " " + s.getStartTime() + "-" + s.getEndTime();
+					adapter.addShift(time);
+					adapter.addShiftData(time, s);
+				}
 				expList.setAdapter(adapter);
 				
 			} catch (Exception e) {
