@@ -1,0 +1,2 @@
+serviceClass: com.firoze.spreadsheet_test.client.GreetingService
+path: 826891C8A8CE5D47A520ED5C28E5CDA7.gwt.rpc

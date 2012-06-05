@@ -1,0 +1,3 @@
+# Module firoze_googleapi_test
+# RPC service class, partial path of RPC policy file
+com.firoze.spreadsheet_test.client.GreetingService, 826891C8A8CE5D47A520ED5C28E5CDA7.gwt.rpc
