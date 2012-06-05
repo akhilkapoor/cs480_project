@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Todo Client</string>
+    <string name="createButtonLabel">Create Todo</string>
+    <string name="viewButtonLabel">View Todos</string>
+    <string name="titleText">Title: </string>
+    <string name="dateText">Date: </string>
+    <string name="notesText">Notes: </string>
+    <string name="submitButtonLabel">Submit</string>
+
+</resources>
