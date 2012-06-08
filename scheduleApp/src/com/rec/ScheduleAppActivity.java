@@ -10,9 +10,11 @@ import android.widget.EditText;
 
 public class ScheduleAppActivity extends Activity {
 	
-	private EditText nameField;
-	private Button nameButton;
-	private Button scheduleButton;
+	private EditText mNameField;
+	private Button mNameButton;
+	private Button mScheduleButton;
+	private Button mOpenButton;
+	private Intent mIntent;
 	
     /** Called when the activity is first created. */
     @Override
@@ -20,26 +22,43 @@ public class ScheduleAppActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        nameField = (EditText) findViewById(R.id.nameField);
+        mNameField = (EditText) findViewById(R.id.nameField);
+        mIntent = new Intent(this, weekSchedule.class);
         
         //Search for schedule of a specific Employee
-        nameButton = (Button) findViewById(R.id.submitName);
-        nameButton.setOnClickListener(new OnClickListener() {
+        mNameButton = (Button) findViewById(R.id.submitName);
+        mNameButton.setOnClickListener(new OnClickListener() {
         	public void onClick(View v) {
-        		Intent empSched = new Intent(v.getContext(), weekSchedule.class);
-        		empSched.putExtra("employee", nameField.getText().toString());
-        		startActivity(empSched);
+        		startIntent(mNameField.getText().toString());
         	}
         });
         
         //Look at the schedule for the whole week
-        scheduleButton = (Button) findViewById(R.id.viewSchedule);
-        scheduleButton.setOnClickListener(new OnClickListener() {
+        mScheduleButton = (Button) findViewById(R.id.viewSchedule);
+        mScheduleButton.setOnClickListener(new OnClickListener() {
         	public void onClick(View v) {
-        		Intent weekSched = new Intent(v.getContext(), weekSchedule.class);
-        		weekSched.putExtra("employee", "");
-        		startActivity(weekSched);
+        		startIntent("ViewWeekSchedule");
         	}
         });
+        
+      //Look at the open shifts
+        mOpenButton = (Button) findViewById(R.id.viewOpen);
+        mOpenButton.setOnClickListener(new OnClickListener() {
+        	public void onClick(View v) {
+        		startIntent("ViewOpenShifts");
+        	}
+        });
+    }
+    
+    private void startIntent(String query) {
+    	mIntent.putExtra("query", query);
+    	if (!query.contains("ViewWeekSchedule") && !query.contains("ViewOpenShifts")) {
+    		mIntent.putExtra("EmployeeSearch", true);
+    	}
+    	else {
+    		mIntent.putExtra("EmployeeSearch", false);
+    	}
+    	
+    	startActivity(mIntent);
     }
 }

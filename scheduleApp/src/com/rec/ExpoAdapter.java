@@ -12,18 +12,18 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
 public class ExpoAdapter extends BaseExpandableListAdapter {
-	private Context context;
-	private ArrayList<String> groups;
-	private ArrayList<ArrayList<Shift>> children;
+	private Context mContext;
+	private ArrayList<String> mGroups;
+	private ArrayList<ArrayList<Shift>> mChildren;
         
 	public ExpoAdapter(Context context, ArrayList<String> group, ArrayList<ArrayList<Shift>> children) {
-		this.context = context;
-		this.groups = group;
-		this.children = children;
+		this.mContext = context;
+		this.mGroups = group;
+		this.mChildren = children;
 	}
 
 	public Object getChild(int groupPosition, int childPosition) {
-		return children.get(groupPosition).get(childPosition);
+		return mChildren.get(groupPosition).get(childPosition);
 	}
 
 	public long getChildId(int groupPosition, int childPosition) {
@@ -31,7 +31,7 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
 	}
 
 	public int getChildrenCount(int groupPosition) {
-		return children.get(groupPosition).size();
+		return mChildren.get(groupPosition).size();
 	}
 
 	public TextView getGenericView() {
@@ -39,7 +39,7 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
 		AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
 				ViewGroup.LayoutParams.MATCH_PARENT, 64);
 
-		TextView textView = new TextView(context);
+		TextView textView = new TextView(mContext);
 		textView.setLayoutParams(lp);
 		// Center the text vertically
 		textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
@@ -53,7 +53,7 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
             View convertView, ViewGroup parent) {
         Shift data = (Shift) getChild(groupPosition, childPosition);
         if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) context
+            LayoutInflater infalInflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.childrow, null);
         }
@@ -63,7 +63,12 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
         TextView tvNotes = (TextView) convertView.findViewById(R.id.shiftNotes);
         
         tvLocation.setText(data.getLocation());
-        tvPerson.setText(data.getPerson());
+        if (!data.getPerson().equals(" ")) {
+        	tvPerson.setText(data.getPerson());
+        }
+        else {
+        	tvPerson.setVisibility(View.GONE);
+        }
         tvState.setText(data.getShiftState());
         tvNotes.setText(data.getShiftNotes());
 
@@ -71,11 +76,11 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
     }
 
 	public Object getGroup(int groupPosition) {
-		return groups.get(groupPosition);
+		return mGroups.get(groupPosition);
 	}
 
 	public int getGroupCount() {
-		return groups.size();
+		return mGroups.size();
 	}
 
 	public long getGroupId(int groupPosition) {
@@ -87,7 +92,7 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
             ViewGroup parent) {
         String group = (String) getGroup(groupPosition);
         if (convertView == null) {
-            LayoutInflater infalInflater = (LayoutInflater) context
+            LayoutInflater infalInflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.grouprow, null);
         }
@@ -105,16 +110,16 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
 	}
 	
 	public void addShift(String shift) {
-        if (!groups.contains(shift)) {
-            groups.add(shift);
-            children.add(new ArrayList<Shift>());
+        if (!mGroups.contains(shift)) {
+            mGroups.add(shift);
+            mChildren.add(new ArrayList<Shift>());
         }
     }
 	
 	public void addShiftData(String shiftTime, Shift data) {
-		int index = groups.indexOf(shiftTime);
+		int index = mGroups.indexOf(shiftTime);
 		if (index >= 0) {
-			children.get(index).add(data);
+			mChildren.get(index).add(data);
 		}
 	}
  }

@@ -9,7 +9,7 @@
         android:id="@+id/shiftTime"
         android:layout_width="fill_parent"
         android:layout_height="45dip"
-        android:text="Groups"
+        android:text=""
         android:gravity="center_vertical|left"
         android:paddingLeft="40dip"
         android:paddingRight="5dip"

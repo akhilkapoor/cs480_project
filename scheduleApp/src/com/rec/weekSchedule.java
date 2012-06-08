@@ -7,7 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,28 +16,25 @@ import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.BaseExpandableListAdapter;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
 
 public class weekSchedule extends ExpandableListActivity{
 	
-	private EditText eName;
+	private String mQuery;
+	private Boolean mEmployeeSearch;
 	
 	//Run On start of Activity
 	@Override
     public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedulelayout);
-		eName = new EditText(this);
+		
 		
 		Bundle extras = getIntent().getExtras();
-		eName.setText(extras.getString("employee"));
+		//mName = new EditText(this);
+		//mName.setText(extras.getString("query"));
+		mQuery = extras.getString("query");
+		mEmployeeSearch = extras.getBoolean("EmployeeSearch");
 		
 		new requestSchedule().execute();
 	}
@@ -46,11 +42,15 @@ public class weekSchedule extends ExpandableListActivity{
 	//Perform a request of the schedule for the week
 	private class requestSchedule extends AsyncTask<Void, Void, String> {
 		
+		private String query;
+		private Boolean employeeSearch;
 		private ProgressDialog dialog;
 		private ObjectMapper mapper;
 		
 		//Show a loading screen
 		protected void onPreExecute() {
+			query = mQuery;
+			employeeSearch = mEmployeeSearch;
 			dialog = ProgressDialog.show(weekSchedule.this, "", "Loading Schedule.\n Please wait...", true);			
 		}
 
@@ -59,7 +59,19 @@ public class weekSchedule extends ExpandableListActivity{
 		protected String doInBackground(Void... arg0) {
 	    	String data = "";
 			try {
-				String sURL = "http://zyntango.appspot.com/test/testapi";
+				String sURL = "";
+				if (employeeSearch) {
+					query = query.trim();
+					query = query.replace(" ", "%20");
+					sURL = "http://zyntangi.appspot.com/rest/shift/name/"+query;
+				}
+				else if (query.contains("ViewWeekSchedule")) {
+					sURL = "http://zyntangi.appspot.com/rest/shift/all";
+				}
+				else if (query.contains("ViewOpenShifts")) {
+					sURL = "http://zyntangi.appspot.com/rest/shift/open";
+				}
+				
     			URL rURL = new URL(sURL);
     			HttpURLConnection conn = (HttpURLConnection)rURL.openConnection();
     			conn.setRequestMethod("GET");
@@ -93,8 +105,6 @@ public class weekSchedule extends ExpandableListActivity{
 			if (dialog.isShowing()) {
 				dialog.cancel();
 			}
-			String empName = eName.getText().toString();
-			empName = empName.toLowerCase();
 			
 			mapper = new ObjectMapper();
 			final ArrayList <Shift> shifts = new ArrayList<Shift>();
@@ -104,15 +114,8 @@ public class weekSchedule extends ExpandableListActivity{
 				
 				if (root.path("shift").isArray()) {
 					for (JsonNode node: root.path("shift")) {
-						Shift t = mapper.readValue(node.traverse(), Shift.class);
-						String tName = t.getPerson().toLowerCase();
-						
-						if ( empName.equals("") ){
-							shifts.add(t);
-						}
-						else if (tName.contains(empName) ) {
-							shifts.add(t);
-						}
+						Shift t = mapper.readValue(node.traverse(), Shift.class);						
+						shifts.add(t);
 					}	
 				}
 				else {

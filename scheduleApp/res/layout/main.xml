@@ -8,7 +8,7 @@
         android:id="@+id/nameLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name: "
+        android:text="@string/EmployeeField"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
@@ -25,16 +25,26 @@
         android:id="@+id/submitName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Search Employee Schedule" />
+        android:text="@string/EmployeeButton" />
     
     <View
         android:layout_width="0dp"
-        android:layout_height="20dp" />
+        android:layout_height="10dp" />
 	
     <Button
         android:id="@+id/viewSchedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Schedule for The Week" />
+        android:text="@string/WeekButton" />
+    
+    <View
+        android:layout_width="0dp"
+        android:layout_height="10dp" />
+	
+    <Button
+        android:id="@+id/viewOpen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/OpenButton" />
     
 </LinearLayout>

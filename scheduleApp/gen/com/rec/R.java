@@ -23,6 +23,7 @@ public final class R {
         public static final int shiftState=0x7f050003;
         public static final int shiftTime=0x7f050005;
         public static final int submitName=0x7f050008;
+        public static final int viewOpen=0x7f05000a;
         public static final int viewSchedule=0x7f050009;
     }
     public static final class layout {
@@ -32,7 +33,10 @@ public final class R {
         public static final int schedulelayout=0x7f030003;
     }
     public static final class string {
-        public static final int app_name=0x7f040001;
-        public static final int hello=0x7f040000;
+        public static final int EmployeeButton=0x7f040002;
+        public static final int EmployeeField=0x7f040001;
+        public static final int OpenButton=0x7f040004;
+        public static final int WeekButton=0x7f040003;
+        public static final int app_name=0x7f040000;
     }
 }

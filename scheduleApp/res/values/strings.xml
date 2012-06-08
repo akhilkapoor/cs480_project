@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Drexel REC Center Employee Schedule</string>
 
-    <string name="hello">Hello World, ScheduleAppActivity!</string>
-    <string name="app_name">ScheduleApp</string>
-
+    <string name="EmployeeField">Employee Name: </string>
+    <string name="EmployeeButton">Search Employee Schedule</string>
+    <string name="WeekButton">View Schedule for The Week</string>
+    <string name="OpenButton">View Open Shifts</string>
+    
+    
 </resources>
