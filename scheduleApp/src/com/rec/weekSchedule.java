@@ -27,12 +27,9 @@ public class weekSchedule extends ExpandableListActivity{
 	@Override
     public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.schedulelayout);
-		
+		setContentView(R.layout.schedulelayout);	
 		
 		Bundle extras = getIntent().getExtras();
-		//mName = new EditText(this);
-		//mName.setText(extras.getString("query"));
 		mQuery = extras.getString("query");
 		mEmployeeSearch = extras.getBoolean("EmployeeSearch");
 		
@@ -119,7 +116,7 @@ public class weekSchedule extends ExpandableListActivity{
 					}	
 				}
 				else {
-					Shift t = mapper.readValue(root.path("todo").traverse(), Shift.class);
+					Shift t = mapper.readValue(root.path("shift").traverse(), Shift.class);
 					shifts.add(t);
 				}
 				

@@ -1,0 +1,40 @@
+<LinearLayout 
+    android:id="@+id/LinearLayout01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_weight="1"
+    android:baselineAligned="false"
+    android:paddingLeft="60dip"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        
+    <TextView
+          android:id="@+id/location"
+          android:layout_width="fill_parent"
+          android:layout_height="WRAP_CONTENT"
+          android:textSize="16sp"
+          android:gravity="center_vertical" />
+      
+    <TextView
+          android:id="@+id/person"
+          android:layout_width="fill_parent"
+          android:layout_height="18sp"
+          android:textSize="12sp" 
+          android:singleLine="true"
+          android:ellipsize="marquee" />
+      
+    <TextView
+          android:id="@+id/shiftState"
+          android:layout_width="fill_parent"
+          android:layout_height="13sp"
+          android:textSize="8sp"
+          android:singleLine="true"
+          android:ellipsize="marquee" />
+     
+    <TextView
+          android:id="@+id/shiftNotes"
+          android:layout_width="fill_parent"
+          android:layout_height="13sp"
+          android:textSize="8sp"
+          android:ellipsize="marquee" />
+</LinearLayout>
