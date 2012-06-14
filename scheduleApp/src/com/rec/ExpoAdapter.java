@@ -65,6 +65,11 @@ public class ExpoAdapter extends BaseExpandableListAdapter {
 			mChildren.get(index).add(data);
 		}
 	}
+	
+	public Shift getShift(String time, int cPos) {
+		int index = mGroups.indexOf(time);
+		return mChildren.get(index).get(cPos);
+	}
 
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
             ViewGroup parent) {

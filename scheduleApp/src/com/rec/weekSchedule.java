@@ -14,11 +14,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import android.app.ExpandableListActivity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 
-public class weekSchedule extends ExpandableListActivity{
+public class weekSchedule extends ExpandableListActivity {
 	
 	private String mQuery;
 	private Boolean mEmployeeSearch;
@@ -43,6 +47,8 @@ public class weekSchedule extends ExpandableListActivity{
 		private Boolean employeeSearch;
 		private ProgressDialog dialog;
 		private ObjectMapper mapper;
+		private int lastExpandedGroupPosition = 0;
+		private Boolean checkOpen = false;
 		
 		//Show a loading screen
 		protected void onPreExecute() {
@@ -66,6 +72,7 @@ public class weekSchedule extends ExpandableListActivity{
 					sURL = "http://zyntangi.appspot.com/rest/shift/all";
 				}
 				else if (query.contains("ViewOpenShifts")) {
+					checkOpen = true;
 					sURL = "http://zyntangi.appspot.com/rest/shift/open";
 				}
 				
@@ -123,9 +130,9 @@ public class weekSchedule extends ExpandableListActivity{
 				ArrayList<String> shiftTimes = new ArrayList<String>();
 				ArrayList<ArrayList<Shift>> shiftData = new ArrayList<ArrayList<Shift>>();
 				
-				ExpandableListView expList;
+				final ExpandableListView expList;
 				expList = getExpandableListView();
-				ExpoAdapter adapter = new ExpoAdapter(getApplicationContext(), shiftTimes, shiftData);
+				final ExpoAdapter adapter = new ExpoAdapter(getApplicationContext(), shiftTimes, shiftData);
 				
 				for (Shift s : shifts) {
 					String time = s.getDayOfWeek() + " " + s.getStartTime() + "-" + s.getEndTime();
@@ -133,7 +140,44 @@ public class weekSchedule extends ExpandableListActivity{
 					adapter.addShiftData(time, s);
 				}
 				expList.setAdapter(adapter);
+
+				// only implementing the messaging for Open shifts
+				if (checkOpen) {
+					expList.setOnChildClickListener(new OnChildClickListener() {
+					
+						@Override
+						public boolean onChildClick(ExpandableListView parent, View v,
+								int groupPosition, int childPosition, long id) {
+	
+							
+								Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+								String time = (String) parent.getAdapter().getItem(groupPosition);
+								sendIntent.putExtra("sms_body", "Hi, I am available to work on " 
+										+ parent.getAdapter().getItem(groupPosition)
+										+ " at "
+										+ adapter.getShift(time, childPosition).getLocation()); 
+								sendIntent.setType("vnd.android-dir/mms-sms");
+								startActivity(sendIntent);
+							
+							return false;
+						}
+					});
+				}
 				
+				if (checkOpen) {
+					expList.setOnGroupExpandListener(new OnGroupExpandListener() {
+						
+						@Override
+						public void onGroupExpand(int groupPosition) {
+							
+							if (groupPosition != lastExpandedGroupPosition) {
+				                expList.collapseGroup(lastExpandedGroupPosition);
+	
+				            }
+				            lastExpandedGroupPosition = groupPosition;						
+						}
+					});
+				}				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -149,4 +193,5 @@ public class weekSchedule extends ExpandableListActivity{
 			return rootNode;
 	    }
     }
+	
 }
